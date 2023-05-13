@@ -12,30 +12,38 @@ import { View } from "react-native";
 import logo from "../../../assets/shopping.png";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
-const Login = () => {
+const Register = () => {
   const navigation = useNavigation();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const login = () => {
-    navigation.navigate("Tabs");
-  };
-
   return (
     <>
       <View style={styles.container}>
         <View style={styles.subContainer}>
           <View style={styles.titleContainer}>
             <Image source={logo} style={styles.image} />
-            <Text style={styles.screenHeading}>Login</Text>
+            <Text style={styles.screenHeading}>Register</Text>
           </View>
           <View style={styles.inputContainer}>
+            <TextInput
+              value={firstName}
+              onChangeText={(e) => setFirstName(e)}
+              style={styles.input}
+              placeholder="Enter your first name"
+            />
+            <TextInput
+              value={lastName}
+              onChangeText={(e) => setLastName(e)}
+              style={styles.input}
+              placeholder="Enter your last name"
+            />
             <TextInput
               value={email}
               onChangeText={(e) => setEmail(e)}
               style={styles.input}
               placeholder="Enter your email"
-              keyboardType="email-address"
             />
             <TextInput
               value={password}
@@ -48,14 +56,14 @@ const Login = () => {
               <BouncyCheckbox onPress={(isChecked) => {}} fillColor="#2a2f5b" />
               <Text>Show Password</Text>
             </View>
-            <TouchableOpacity style={styles.button} onPress={login}>
-              <Text style={styles.btnText}>Login</Text>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.btnText}>Register</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.bottomTextContainer}>
-            <Text style={styles.bottomText}>Don't have an account?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-              <Text style={styles.bottomLink}>Register</Text>
+            <Text style={styles.bottomText}>Already have an account?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+              <Text style={styles.bottomLink}>Login</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -64,7 +72,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
