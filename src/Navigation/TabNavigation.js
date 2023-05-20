@@ -3,7 +3,6 @@ import React from "react";
 import HomeScreen from "../Screens/HomeScreen";
 import CartScreen from "../Screens/CartScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
-import { StyleSheet } from "react-native";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
@@ -28,6 +27,7 @@ const TabNavigation = () => {
             },
             tabBarShowLabel: false,
             tabBarActiveBackgroundColor: "orange",
+            headerShown: false,
           }}
         />
         <Tab.Screen
@@ -41,6 +41,7 @@ const TabNavigation = () => {
             },
             tabBarActiveBackgroundColor: "orange",
             tabBarShowLabel: false,
+            headerShown: false,
           }}
         />
         <Tab.Screen
@@ -52,6 +53,7 @@ const TabNavigation = () => {
             },
             tabBarShowLabel: false,
             tabBarActiveBackgroundColor: "orange",
+            headerShown: false,
           }}
         />
       </Tab.Navigator>
@@ -60,9 +62,3 @@ const TabNavigation = () => {
 };
 
 export default TabNavigation;
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: "black",
-  },
-});

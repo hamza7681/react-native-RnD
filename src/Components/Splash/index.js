@@ -5,20 +5,28 @@ import { StyleSheet } from "react-native";
 import { View } from "react-native";
 import logo from "../../../assets/shopping.png";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
 
 const Splash = () => {
   const navigation = useNavigation();
-  useEffect(() => {
-    setTimeout(() => {
+  const getToken = async () => {
+    const res = await AsyncStorage.getItem("token");
+    if (res) {
+      navigation.navigate("Tabs");
+    } else {
       navigation.navigate("Login");
-    }, 3000);
+    }
+  };
+  useEffect(() => {
+    getToken();
   }, []);
   return (
     <>
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image source={logo} style={styles.image} />
-          <Text style={styles.text}>Welcome to E-Commerce</Text>
+          <Text style={styles.text}>Welcome to SmartShop</Text>
         </View>
       </View>
     </>

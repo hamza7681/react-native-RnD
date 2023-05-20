@@ -11,6 +11,8 @@ import {
 import { View } from "react-native";
 import logo from "../../../assets/shopping.png";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { baseUrl } from "../../axios/config";
+import GlobalLoader from "../../ReuseAbles/GlobalLoader";
 
 const Register = () => {
   const navigation = useNavigation();
@@ -18,8 +20,42 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
+
+  const register = async () => {
+    Keyboard.dismiss();
+    setLoading(true);
+    try {
+      const res = await fetch(baseUrl + "/auth/register", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+        }),
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        navigation.navigate("Login");
+      } else {
+        alert(data.msg);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   return (
     <>
+      {loading && <GlobalLoader />}
       <View style={styles.container}>
         <View style={styles.subContainer}>
           <View style={styles.titleContainer}>
@@ -44,19 +80,23 @@ const Register = () => {
               onChangeText={(e) => setEmail(e)}
               style={styles.input}
               placeholder="Enter your email"
+              keyboardType="email-address"
             />
             <TextInput
               value={password}
-              secureTextEntry={true}
+              secureTextEntry={show ? false : true}
               placeholder="Enter your password"
               onChangeText={(e) => setPassword(e)}
               style={styles.input}
             />
             <View style={styles.showPassword}>
-              <BouncyCheckbox onPress={(isChecked) => {}} fillColor="#2a2f5b" />
+              <BouncyCheckbox
+                onPress={(isChecked) => setShow(isChecked)}
+                fillColor="#2a2f5b"
+              />
               <Text>Show Password</Text>
             </View>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={register}>
               <Text style={styles.btnText}>Register</Text>
             </TouchableOpacity>
           </View>

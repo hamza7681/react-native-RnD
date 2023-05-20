@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -11,18 +11,50 @@ import {
 import { View } from "react-native";
 import logo from "../../../assets/shopping.png";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import GlobalLoader from "../../ReuseAbles/GlobalLoader";
+import { baseUrl } from "../../axios/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Keyboard } from "react-native";
 
 const Login = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const login = () => {
-    navigation.navigate("Tabs");
+  const login = async () => {
+    Keyboard.dismiss();
+    setLoading(true);
+    try {
+      const res = await fetch(baseUrl + "/auth/login", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        await AsyncStorage.setItem("token", data.token);
+        navigation.navigate("Tabs");
+      } else {
+        alert(data.msg);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   return (
     <>
+      {loading && <GlobalLoader />}
       <View style={styles.container}>
         <View style={styles.subContainer}>
           <View style={styles.titleContainer}>
@@ -39,13 +71,16 @@ const Login = () => {
             />
             <TextInput
               value={password}
-              secureTextEntry={true}
+              secureTextEntry={show ? false : true}
               placeholder="Enter your password"
               onChangeText={(e) => setPassword(e)}
               style={styles.input}
             />
             <View style={styles.showPassword}>
-              <BouncyCheckbox onPress={(isChecked) => {}} fillColor="#2a2f5b" />
+              <BouncyCheckbox
+                onPress={(isChecked) => setShow(isChecked)}
+                fillColor="#2a2f5b"
+              />
               <Text>Show Password</Text>
             </View>
             <TouchableOpacity style={styles.button} onPress={login}>
