@@ -1,12 +1,12 @@
 import React from "react";
-import Splash from "../Components/Splash";
+import MainSplash from "../Components/Splash/index";
 
-const SplashScreen = () => {
+const MainSplashScreen = () => {
   return (
     <>
-      <Splash />
+      <MainSplash />
     </>
   );
 };
 
-export default SplashScreen;
+export default MainSplashScreen;

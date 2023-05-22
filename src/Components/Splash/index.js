@@ -6,9 +6,8 @@ import { View } from "react-native";
 import logo from "../../../assets/shopping.png";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
 
-const Splash = () => {
+const MainSplash = () => {
   const navigation = useNavigation();
   const getToken = async () => {
     const res = await AsyncStorage.getItem("token");
@@ -33,7 +32,7 @@ const Splash = () => {
   );
 };
 
-export default Splash;
+export default MainSplash;
 
 const styles = StyleSheet.create({
   container: {

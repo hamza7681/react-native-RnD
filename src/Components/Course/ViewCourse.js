@@ -19,6 +19,7 @@ const ViewCourse = () => {
   const [course, setCourse] = useState({});
   const [loading, setLoading] = useState(false);
   const [toggle, setToggle] = useState(true);
+  const [fetchAgain, setFetchAgain] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -36,13 +37,14 @@ const ViewCourse = () => {
           setToggle(false);
         }
         setLoading(false);
+        setFetchAgain(false);
       } catch (error) {
         console.log(error);
         setLoading(false);
       }
     };
     getCourse();
-  }, []);
+  }, [fetchAgain]);
 
   const UpdateDate = ({ newDate }) => {
     const date = new Date(newDate);
@@ -61,9 +63,19 @@ const ViewCourse = () => {
         "cartItem",
         JSON.stringify([...parseCart, item])
       );
+      setFetchAgain(true);
     } else {
       await AsyncStorage.setItem("cartItem", JSON.stringify([item]));
+      setFetchAgain(true);
     }
+  };
+
+  const deleteProduct = async (newItem) => {
+    const cartItem = await AsyncStorage.getItem("cartItem");
+    const parseCart = JSON.parse(cartItem);
+    const filterProducts = parseCart.filter((item) => item._id !== newItem._id);
+    await AsyncStorage.setItem("cartItem", JSON.stringify(filterProducts));
+    setFetchAgain(true);
   };
 
   return (
@@ -146,7 +158,7 @@ const ViewCourse = () => {
               ) : (
                 <TouchableOpacity
                   style={styles.cartBtn1}
-                  onPress={() => addToCart(course)}
+                  onPress={() => deleteProduct(course)}
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
                     Remove From Cart

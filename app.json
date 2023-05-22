@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/shopping.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.hamza7681.myapp"

@@ -12,6 +12,8 @@ import { ActivityIndicator } from "react-native";
 const Profile = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
+  const [fetchAgain, setFetchAgain] = useState(false);
+
   const navigation = useNavigation();
   useEffect(() => {
     setLoading(true);
@@ -31,11 +33,15 @@ const Profile = () => {
       }
     };
     getProfile();
-  }, []);
+  }, [fetchAgain]);
 
   const logout = async () => {
     await AsyncStorage.multiRemove(["token", "cartItem"]);
     navigation.navigate("Login");
+  };
+
+  const refresh = () => {
+    setFetchAgain(true);
   };
 
   return (
@@ -67,6 +73,20 @@ const Profile = () => {
               {user?.firstName} {user?.lastName}
             </Text>
             <Text style={{ color: "gray" }}>{user?.email}</Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#2a2f5b",
+                paddingHorizontal: 30,
+                paddingVertical: 10,
+                marginVertical: 10,
+                borderRadius: 3,
+              }}
+              onPress={refresh}
+            >
+              <Text style={{ color: "white", fontWeight: "bold" }}>
+                Refresh
+              </Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={{
                 backgroundColor: "#2a2f5b",

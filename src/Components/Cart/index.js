@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,26 +8,44 @@ import { FlatList } from "react-native";
 import { Image } from "react-native";
 import FormatPrice from "../../ReuseAbles/FormatPrice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Cart = () => {
   const insets = useSafeAreaInsets();
   const [cartItems, setCartItems] = useState([]);
+  const [fetchAgain, setFetchAgain] = useState(false);
 
   useEffect(() => {
     const getCartItems = async () => {
       const cartItem = await AsyncStorage.getItem("cartItem");
       const parseCart = JSON.parse(cartItem);
-      console.log(parseCart);
       setCartItems(parseCart);
+      setFetchAgain(false);
     };
     getCartItems();
-  }, []);
+  }, [fetchAgain]);
 
   const TotalPrice = () => {
-    const totalPrice = cartItems.reduce((acc, course) => {
-      return acc + course.price;
-    }, 0);
-    return <FormatPrice price={totalPrice} />;
+    if (cartItems) {
+      const totalPrice = cartItems.reduce((acc, course) => {
+        return acc + course.price;
+      }, 0);
+      return <FormatPrice price={totalPrice} />;
+    } else {
+      return <Text>0</Text>;
+    }
+  };
+
+  const deleteProduct = async (newItem) => {
+    const cartItem = await AsyncStorage.getItem("cartItem");
+    const parseCart = JSON.parse(cartItem);
+    const filterProducts = parseCart.filter((item) => item._id !== newItem._id);
+    await AsyncStorage.setItem("cartItem", JSON.stringify(filterProducts));
+    setFetchAgain(true);
+  };
+
+  const refresh = () => {
+    setFetchAgain(true);
   };
 
   const CartItem = ({ item }) => {
@@ -53,13 +71,22 @@ const Cart = () => {
             <Text style={{ color: "gray" }}>{item?.title_desc}</Text>
           </View>
         </View>
-        <View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            gap: 10,
+          }}
+        >
+          <TouchableOpacity onPress={() => deleteProduct(item)}>
+            <FontAwesome name="trash" size={24} color="#f52525" />
+          </TouchableOpacity>
           <Text
             style={{
               fontWeight: "bold",
               fontSize: 22,
-              textAlign: "right",
-              color: "#f52525",
+              color: "green",
             }}
           >
             <FormatPrice price={item?.price} />
@@ -94,50 +121,74 @@ const Cart = () => {
           Cart
         </Text>
       </View>
-      <ScrollView>
-        <FlatList
-          data={cartItems}
-          keyExtractor={(item) => item._id}
-          contentContainerStyle={styles.courseList}
-          renderItem={({ item }) => <CartItem item={item} />}
-        />
+      {cartItems?.length === 0 ? (
         <View
-          style={{
-            borderWidth: 1,
-            marginVertical: 20,
-          }}
-        ></View>
-        <View style={{ paddingHorizontal: 25, gap: 10 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-              Total Items
-            </Text>
-            <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-              {cartItems?.length}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-              Total Price
-            </Text>
-            <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-              <TotalPrice />
-            </Text>
-          </View>
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={{ fontSize: 22 }}>Your cart is empty</Text>
         </View>
-      </ScrollView>
+      ) : (
+        <>
+          <ScrollView>
+            <FlatList
+              data={cartItems}
+              keyExtractor={(item) => item._id}
+              contentContainerStyle={styles.courseList}
+              renderItem={({ item }) => <CartItem item={item} />}
+            />
+            <View
+              style={{
+                borderWidth: 1,
+                marginVertical: 20,
+              }}
+            ></View>
+            <View style={{ paddingHorizontal: 25, gap: 10 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                  Total Items
+                </Text>
+                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                  {cartItems ? cartItems.length : 0}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                  Total Price
+                </Text>
+                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                  <TotalPrice />
+                </Text>
+              </View>
+            </View>
+          </ScrollView>
+        </>
+      )}
+      <View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#2a2f5b",
+            paddingHorizontal: 30,
+            paddingVertical: 10,
+            marginVertical: 10,
+            borderRadius: 3,
+          }}
+          onPress={refresh}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>Refresh Cart</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
