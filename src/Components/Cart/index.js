@@ -9,6 +9,7 @@ import { Image } from "react-native";
 import FormatPrice from "../../ReuseAbles/FormatPrice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
+import { Dimensions } from "react-native";
 
 const Cart = () => {
   const insets = useSafeAreaInsets();
@@ -136,57 +137,55 @@ const Cart = () => {
               contentContainerStyle={styles.courseList}
               renderItem={({ item }) => <CartItem item={item} />}
             />
-            <View
-              style={{
-                borderWidth: 1,
-                marginVertical: 20,
-              }}
-            ></View>
-            <View style={{ paddingHorizontal: 25, gap: 10 }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                  Total Items
-                </Text>
-                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                  {cartItems ? cartItems.length : 0}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                  Total Price
-                </Text>
-                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                  <TotalPrice />
-                </Text>
-              </View>
-            </View>
+
+            {cartItems && (
+              <>
+                <View
+                  style={{
+                    borderWidth: 1,
+                    marginVertical: 20,
+                  }}
+                ></View>
+                <View style={{ paddingHorizontal: 25, gap: 10 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                      Total Items
+                    </Text>
+                    <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                      {cartItems ? cartItems.length : 0}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                      Total Price
+                    </Text>
+                    <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                      <TotalPrice />
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
           </ScrollView>
         </>
       )}
-      <View>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#2a2f5b",
-            paddingHorizontal: 30,
-            paddingVertical: 10,
-            marginVertical: 10,
-            borderRadius: 3,
-          }}
-          onPress={refresh}
-        >
-          <Text style={{ color: "white", fontWeight: "bold" }}>Refresh Cart</Text>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <TouchableOpacity style={styles.btnRefresh} onPress={refresh}>
+          <Text style={{ color: "white", fontWeight: "bold" }}>
+            Refresh Cart
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -194,6 +193,8 @@ const Cart = () => {
 };
 
 export default Cart;
+
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -203,5 +204,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     gap: 5,
     paddingVertical: 10,
+  },
+  btnRefresh: {
+    backgroundColor: "#2a2f5b",
+    paddingHorizontal: 30,
+    paddingVertical: 20,
+    marginVertical: 10,
+    borderRadius: 3,
+    justifyContent: "center",
+    alignItems: "center",
+    width: width - 50,
   },
 });
